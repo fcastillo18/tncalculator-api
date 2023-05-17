@@ -83,3 +83,72 @@ databaseChangeLog:
               - column:
                   name: date
                   type: datetime
+
+  - changeSet:
+      id: 2
+      author: Franklin Castillo
+      changes:
+        - insert:
+            tableName: user
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: username, value: "user1@example.com" }
+              - column: { name: password, value: "password1" }
+              - column: { name: status, value: "active" }
+        - insert:
+            tableName: user
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: username, value: "user2@example.com" }
+              - column: { name: password, value: "password2" }
+              - column: { name: status, value: "active" }
+  - changeSet:
+      id: 3
+      author: Franklin Castillo
+      changes:
+        - insert:
+            tableName: operation
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: type, value: "addition" }
+              - column: { name: cost, value: 10 }
+        - insert:
+            tableName: operation
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: type, value: "subtraction" }
+              - column: { name: cost, value: 10 }
+        - insert:
+            tableName: operation
+            columns:
+              - column: { name: id, value: 3 }
+              - column: { name: type, value: "multiplication" }
+              - column: { name: cost, value: 10 }
+        - insert:
+            tableName: operation
+            columns:
+              - column: { name: id, value: 4 }
+              - column: { name: type, value: "division" }
+              - column: { name: cost, value: 10 }
+        - insert:
+            tableName: operation
+            columns:
+              - column: { name: id, value: 5 }
+              - column: { name: type, value: "square_root" }
+              - column: { name: cost, value: 10 }
+        - insert:
+            tableName: operation
+            columns:
+              - column: { name: id, value: 6 }
+              - column: { name: type, value: "random_string" }
+              - column: { name: cost, value: 10 }
+  - changeSet:
+        id: 4
+        author: Franklin Castillo
+        changes:
+          - update:
+              tableName: operation
+              columns:
+                - column:
+                    name: type
+                    valueComputed: "UPPER(type)"
