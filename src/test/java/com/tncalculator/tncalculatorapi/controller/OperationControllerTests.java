@@ -9,6 +9,8 @@ import com.tncalculator.tncalculatorapi.repository.RecordRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
 import com.tncalculator.tncalculatorapi.services.OperationServiceImpl;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,106 +42,218 @@ public class OperationControllerTests {
     @Mock
     private OperationController operationServiceImpl;
 
-    // TODO I could use a little bit of refactor with the different objects I'm using here
+    @Nested
+    @DisplayName("Subtract Tests")
+    class SubtractTests{
+        @Test
+        @DisplayName("Subtract Endpoint Test")
+        public void testSubtractEndpoint() {
+            Long userId = 1L;
+            double num1 = 10.0;
+            double num2 = 5.0;
+            BigDecimal amount = BigDecimal.valueOf(num1 - num2);
+            BigDecimal userBalance = BigDecimal.valueOf(100.0);
+            BigDecimal operationCost = BigDecimal.valueOf(10.0);
 
-    @Test
-    public void testSubtractEndpoint() {
-        Long userId = 1L;
-        double num1 = 10.0;
-        double num2 = 5.0;
-        BigDecimal amount = BigDecimal.valueOf(num1 - num2);
-        BigDecimal userBalance = BigDecimal.valueOf(100.0);
-        BigDecimal operationCost = BigDecimal.valueOf(10.0);
+            // Setting the necessary properties in the user
+            User user = User.builder()
+                    .id(userId)
+                    .balance(userBalance)
+                    .build();
 
-        // Setting the necessary properties in the user
-        User user = User.builder()
-                .id(userId)
-                .balance(userBalance)
-                .build();
+            // Setting the necessary properties in the request
+            OperationRequest request = OperationRequest.builder()
+                    .userId(user.getId())
+                    .num1(num1)
+                    .num1(num2)
+                    .build();
 
-        // Setting the necessary properties in the request
-        OperationRequest request = OperationRequest.builder()
-                .userId(user.getId())
-                .num1(num1)
-                .num1(num2)
-                .build();
+            // Setting the necessary properties in the operation
+            Operation operation = Operation.builder()
+                    .type(Operation.OperationType.SUBTRACTION)
+                    .cost(operationCost)
+                    .build();
 
-        // Setting the necessary properties in the operation
-        Operation operation = Operation.builder()
-                .type(Operation.OperationType.SUBTRACTION)
-                .cost(operationCost)
-                .build();
-
-        // Setting the expected properties in the record
-        Record expectedRecord = Record.builder()
-                .id(1L)
-                .user(user)
-                .operation(operation)
-                .amount(amount)
-                .build();
+            // Setting the expected properties in the record
+            Record expectedRecord = Record.builder()
+                    .id(1L)
+                    .user(user)
+                    .operation(operation)
+                    .amount(amount)
+                    .build();
 
 
-        when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
+            when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
 
-        Record result = operationController.subtract(request);
+            Record result = operationController.subtract(request);
 
-        // assertions to verify that the result matches the expected record
-        Assertions.assertEquals(expectedRecord.getId(), result.getId());
-        Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
-        Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
-        Assertions.assertEquals(expectedRecord.getAmount(), result.getAmount());
+            // assertions to verify that the result matches the expected record
+            Assertions.assertEquals(expectedRecord.getId(), result.getId());
+            Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
+            Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
+            Assertions.assertEquals(expectedRecord.getAmount(), result.getAmount());
+        }
+
+        @Test
+        @DisplayName("Subtract Method Test")
+        public void testSubtractMethod() {
+
+            Long userId = 1L;
+            double num1 = 10.0;
+            double num2 = 5.0;
+            BigDecimal amount = BigDecimal.valueOf(num1 - num2);
+            BigDecimal userBalance = BigDecimal.valueOf(100.0);
+            BigDecimal operationCost = BigDecimal.valueOf(10.0);
+
+            // Setting the necessary properties in the operation
+            Operation operation = Operation.builder()
+                    .type(Operation.OperationType.SUBTRACTION)
+                    .cost(operationCost)
+                    .build();
+
+            // Setting the necessary properties in the user
+            User user = User.builder()
+                    .id(userId)
+                    .balance(userBalance)
+                    .build();
+
+            // Setting the necessary properties in the request
+            OperationRequest request = OperationRequest.builder()
+                    .userId(userId)
+                    .num1(num1)
+                    .num1(num2)
+                    .build();
+
+            // Setting the expected properties in the record
+            Record expectedRecord = Record.builder()
+                    .id(1L)
+                    .user(user)
+                    .operation(operation)
+                    .amount(amount)
+                    .build();
+
+
+            when(operationRepository.findByType(Operation.OperationType.SUBTRACTION)).thenReturn(operation);
+            when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
+            when(recordRepository.save(any(Record.class))).thenReturn(expectedRecord);
+            // Specify the behavior of the subtract method to return the mock record
+            when(operationServiceImpl.subtract(request)).thenReturn(expectedRecord);
+
+            Record result = operationServiceImpl.subtract(request);
+
+            // assertions to verify that the result matches the expected record
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(expectedRecord.getId(), result.getId());
+            Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
+            Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
+        }
     }
 
-    @Test
-    public void testSubtractMethod() {
+    @Nested
+    @DisplayName("Add Tests")
+    class AddTests{
+        @Test
+        @DisplayName("Add Endpoint Test")
+        public void testAddEndpoint() {
+            Long userId = 1L;
+            double num1 = 10.0;
+            double num2 = 5.0;
+            BigDecimal amount = BigDecimal.valueOf(num1 - num2);
+            BigDecimal userBalance = BigDecimal.valueOf(100.0);
+            BigDecimal operationCost = BigDecimal.valueOf(10.0);
 
-        Long userId = 1L;
-        double num1 = 10.0;
-        double num2 = 5.0;
-        BigDecimal amount = BigDecimal.valueOf(num1 - num2);
-        BigDecimal userBalance = BigDecimal.valueOf(100.0);
-        BigDecimal operationCost = BigDecimal.valueOf(10.0);
+            // Setting the necessary properties in the user
+            User user = User.builder()
+                    .id(userId)
+                    .balance(userBalance)
+                    .build();
 
-        // Setting the necessary properties in the operation
-        Operation operation = Operation.builder()
-                .type(Operation.OperationType.SUBTRACTION)
-                .cost(operationCost)
-                .build();
+            // Setting the necessary properties in the request
+            OperationRequest request = OperationRequest.builder()
+                    .userId(user.getId())
+                    .num1(num1)
+                    .num1(num2)
+                    .build();
 
-        // Setting the necessary properties in the user
-        User user = User.builder()
-                .id(userId)
-                .balance(userBalance)
-                .build();
+            // Setting the necessary properties in the operation
+            Operation operation = Operation.builder()
+                    .type(Operation.OperationType.ADDITION)
+                    .cost(operationCost)
+                    .build();
 
-        // Setting the necessary properties in the request
-        OperationRequest request = OperationRequest.builder()
-                .userId(userId)
-                .num1(num1)
-                .num1(num2)
-                .build();
-
-        // Setting the expected properties in the record
-        Record expectedRecord = Record.builder()
-                .id(1L)
-                .user(user)
-                .operation(operation)
-                .amount(amount)
-                .build();
+            // Setting the expected properties in the record
+            Record expectedRecord = Record.builder()
+                    .id(1L)
+                    .user(user)
+                    .operation(operation)
+                    .amount(amount)
+                    .build();
 
 
-        when(operationRepository.findByType(Operation.OperationType.SUBTRACTION)).thenReturn(operation);
-        when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
-        when(recordRepository.save(any(Record.class))).thenReturn(expectedRecord);
-        // Specify the behavior of the subtract method to return the mock record
-        when(operationServiceImpl.subtract(request)).thenReturn(expectedRecord);
+            when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
 
-        Record result = operationServiceImpl.subtract(request);
+            Record result = operationController.subtract(request);
 
-        // assertions to verify that the result matches the expected record
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(expectedRecord.getId(), result.getId());
-        Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
-        Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
+            // assertions to verify that the result matches the expected record
+            Assertions.assertEquals(expectedRecord.getId(), result.getId());
+            Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
+            Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
+            Assertions.assertEquals(expectedRecord.getAmount(), result.getAmount());
+        }
+
+        @Test
+        @DisplayName("Add Method Test")
+        public void testAddMethod() {
+
+            Long userId = 1L;
+            double num1 = 10.0;
+            double num2 = 5.0;
+            BigDecimal amount = BigDecimal.valueOf(num1 - num2);
+            BigDecimal userBalance = BigDecimal.valueOf(100.0);
+            BigDecimal operationCost = BigDecimal.valueOf(10.0);
+
+            // Setting the necessary properties in the operation
+            Operation operation = Operation.builder()
+                    .type(Operation.OperationType.ADDITION)
+                    .cost(operationCost)
+                    .build();
+
+            // Setting the necessary properties in the user
+            User user = User.builder()
+                    .id(userId)
+                    .balance(userBalance)
+                    .build();
+
+            // Setting the necessary properties in the request
+            OperationRequest request = OperationRequest.builder()
+                    .userId(userId)
+                    .num1(num1)
+                    .num1(num2)
+                    .build();
+
+            // Setting the expected properties in the record
+            Record expectedRecord = Record.builder()
+                    .id(1L)
+                    .user(user)
+                    .operation(operation)
+                    .amount(amount)
+                    .build();
+
+
+            when(operationRepository.findByType(Operation.OperationType.ADDITION)).thenReturn(operation);
+            when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
+            when(recordRepository.save(any(Record.class))).thenReturn(expectedRecord);
+            // Specify the behavior of the subtract method to return the mock record
+            when(operationServiceImpl.subtract(request)).thenReturn(expectedRecord);
+
+            Record result = operationServiceImpl.subtract(request);
+
+            // assertions to verify that the result matches the expected record
+            Assertions.assertNotNull(result);
+            Assertions.assertEquals(expectedRecord.getId(), result.getId());
+            Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
+            Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
+        }
     }
+
 }

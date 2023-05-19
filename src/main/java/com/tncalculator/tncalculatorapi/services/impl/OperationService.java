@@ -6,6 +6,6 @@ import com.tncalculator.tncalculatorapi.model.Record;
 
 public interface OperationService {
 
-    public Record subtract(OperationRequest request);
-
+    Record subtract(OperationRequest request);
+    Record add(OperationRequest request);
 }
