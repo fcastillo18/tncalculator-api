@@ -30,9 +30,6 @@ public class Record {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "user_balance", nullable = false)
-    private BigDecimal userBalance;
-
     @Column(name = "operation_response", nullable = false)
     private String operationResponse;
 
