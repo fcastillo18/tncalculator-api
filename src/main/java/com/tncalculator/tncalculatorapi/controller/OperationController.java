@@ -28,4 +28,10 @@ public class OperationController {
     public Record subtract(@RequestBody OperationRequest request) {
         return operationServiceImpl.subtract(request);
     }
+
+    @PostMapping("/add")
+    @ResponseBody
+    public Record add(@RequestBody OperationRequest request) {
+        return operationServiceImpl.add(request);
+    }
 }
