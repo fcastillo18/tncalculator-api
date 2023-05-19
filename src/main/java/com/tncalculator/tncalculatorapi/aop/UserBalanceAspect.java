@@ -2,9 +2,11 @@ package com.tncalculator.tncalculatorapi.aop;
 
 import com.tncalculator.tncalculatorapi.exception.InsufficientBalanceException;
 import com.tncalculator.tncalculatorapi.exception.UserNotFoundException;
+import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.model.User;
+import com.tncalculator.tncalculatorapi.repository.OperationRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,10 +21,12 @@ import java.math.BigDecimal;
 public class UserBalanceAspect {
 
     private final UserRepository userRepository;
+    private final OperationRepository operationRepository;
 
     @Autowired
-    public UserBalanceAspect(UserRepository userRepository) {
+    public UserBalanceAspect(UserRepository userRepository, OperationRepository operationRepository) {
         this.userRepository = userRepository;
+        this.operationRepository = operationRepository;
     }
 
     @Before("@annotation(com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance) && args(request)")
@@ -31,9 +35,9 @@ public class UserBalanceAspect {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         BigDecimal userBalance = user.getBalance();
-        BigDecimal operationAmount = BigDecimal.valueOf(request.getNum1()).subtract(BigDecimal.valueOf(request.getNum2()));
+        Operation operation = operationRepository.findById(request.getOperationId()).orElseThrow(() -> new IllegalArgumentException("Operation not found"));
 
-        if (userBalance.compareTo(operationAmount) < 0) {
+        if (userBalance.compareTo(operation.getCost()) < 0) {
             throw new InsufficientBalanceException("Insufficient balance");
         }
     }

@@ -33,7 +33,7 @@ public class OperationServiceImpl implements OperationService {
     @ValidateUserBalance
     @UpdateUserBalance
     public Record subtract(OperationRequest request) {
-        Operation operation = operationRepository.findByType(Operation.OperationType.SUBTRACTION);
+        Operation operation = operationRepository.findById(request.getOperationId()).orElseThrow();
 
         Record record = Record.builder()
                 .id(1L)
