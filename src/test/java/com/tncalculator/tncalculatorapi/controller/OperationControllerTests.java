@@ -76,7 +76,6 @@ public class OperationControllerTests {
                 .user(user)
                 .operation(operation)
                 .amount(amount)
-                .userBalance(userBalance.subtract(operationCost)) // user balance after operation
                 .build();
 
 
@@ -126,7 +125,6 @@ public class OperationControllerTests {
                 .user(user)
                 .operation(operation)
                 .amount(amount)
-                .userBalance(userBalance.subtract(operationCost)) // user balance after operation
                 .build();
 
 
