@@ -13,11 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class OperationControllerTests {
@@ -39,26 +40,43 @@ public class OperationControllerTests {
     @Mock
     private OperationController operationServiceImpl;
 
+    // TODO I could use a little bit of refactor with the different objects I'm using here
+
     @Test
     public void testSubtractEndpoint() {
         Long userId = 1L;
         double num1 = 10.0;
         double num2 = 5.0;
         BigDecimal amount = BigDecimal.valueOf(num1 - num2);
+        BigDecimal userBalance = BigDecimal.valueOf(100.0);
+        BigDecimal operationCost = BigDecimal.valueOf(10.0);
+
+        // Setting the necessary properties in the user
+        User user = User.builder()
+                .id(userId)
+                .balance(userBalance)
+                .build();
 
         // Setting the necessary properties in the request
         OperationRequest request = OperationRequest.builder()
-                .userId(userId)
+                .userId(user.getId())
                 .num1(num1)
                 .num1(num2)
+                .build();
+
+        // Setting the necessary properties in the operation
+        Operation operation = Operation.builder()
+                .type(Operation.OperationType.SUBTRACTION)
+                .cost(operationCost)
                 .build();
 
         // Setting the expected properties in the record
         Record expectedRecord = Record.builder()
                 .id(1L)
-                .user(User.builder().id(userId).build())
-                .operation(Operation.builder().type(Operation.OperationType.SUBTRACTION).build())
+                .user(user)
+                .operation(operation)
                 .amount(amount)
+                .userBalance(userBalance.subtract(operationCost)) // user balance after operation
                 .build();
 
 
@@ -80,12 +98,20 @@ public class OperationControllerTests {
         double num1 = 10.0;
         double num2 = 5.0;
         BigDecimal amount = BigDecimal.valueOf(num1 - num2);
+        BigDecimal userBalance = BigDecimal.valueOf(100.0);
+        BigDecimal operationCost = BigDecimal.valueOf(10.0);
 
         // Setting the necessary properties in the operation
-        Operation operation = Operation.builder().type(Operation.OperationType.SUBTRACTION).build();
+        Operation operation = Operation.builder()
+                .type(Operation.OperationType.SUBTRACTION)
+                .cost(operationCost)
+                .build();
 
         // Setting the necessary properties in the user
-        User user = User.builder().id(userId).build();
+        User user = User.builder()
+                .id(userId)
+                .balance(userBalance)
+                .build();
 
         // Setting the necessary properties in the request
         OperationRequest request = OperationRequest.builder()
@@ -100,6 +126,7 @@ public class OperationControllerTests {
                 .user(user)
                 .operation(operation)
                 .amount(amount)
+                .userBalance(userBalance.subtract(operationCost)) // user balance after operation
                 .build();
 
 
