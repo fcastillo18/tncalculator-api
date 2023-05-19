@@ -26,7 +26,6 @@ public class OperationController {
     @PostMapping("/subtract")
     @ResponseBody
     public Record subtract(@RequestBody OperationRequest request) {
-        System.out.println(request);
         return operationServiceImpl.subtract(request);
     }
 }

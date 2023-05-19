@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @SpringBootTest
@@ -39,11 +41,26 @@ public class OperationControllerTests {
 
     @Test
     public void testSubtractEndpoint() {
-        OperationRequest request = new OperationRequest();
-        // Set the necessary properties in the request
+        Long userId = 1L;
+        double num1 = 10.0;
+        double num2 = 5.0;
+        BigDecimal amount = BigDecimal.valueOf(num1 - num2);
 
-        Record expectedRecord = new Record();
-        // Set the expected properties in the record
+        // Setting the necessary properties in the request
+        OperationRequest request = OperationRequest.builder()
+                .userId(userId)
+                .num1(num1)
+                .num1(num2)
+                .build();
+
+        // Setting the expected properties in the record
+        Record expectedRecord = Record.builder()
+                .id(1L)
+                .user(User.builder().id(userId).build())
+                .operation(Operation.builder().type(Operation.OperationType.SUBTRACTION).build())
+                .amount(amount)
+                .build();
+
 
         when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
 
@@ -53,29 +70,49 @@ public class OperationControllerTests {
         Assertions.assertEquals(expectedRecord.getId(), result.getId());
         Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
         Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
+        Assertions.assertEquals(expectedRecord.getAmount(), result.getAmount());
     }
 
     @Test
     public void testSubtractMethod() {
-        OperationRequest request = new OperationRequest();
-        // Set the necessary properties in the request
 
-        Operation operation = new Operation();
-        // Set the necessary properties in the operation
+        Long userId = 1L;
+        double num1 = 10.0;
+        double num2 = 5.0;
+        BigDecimal amount = BigDecimal.valueOf(num1 - num2);
 
-        User user = new User();
-        // Set the necessary properties in the user
+        // Setting the necessary properties in the operation
+        Operation operation = Operation.builder().type(Operation.OperationType.SUBTRACTION).build();
 
-        Record expectedRecord = new Record();
-        // Set the expected properties in the record
+        // Setting the necessary properties in the user
+        User user = User.builder().id(userId).build();
+
+        // Setting the necessary properties in the request
+        OperationRequest request = OperationRequest.builder()
+                .userId(userId)
+                .num1(num1)
+                .num1(num2)
+                .build();
+
+        // Setting the expected properties in the record
+        Record expectedRecord = Record.builder()
+                .id(1L)
+                .user(user)
+                .operation(operation)
+                .amount(amount)
+                .build();
+
 
         when(operationRepository.findByType(Operation.OperationType.SUBTRACTION)).thenReturn(operation);
         when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
         when(recordRepository.save(any(Record.class))).thenReturn(expectedRecord);
+        // Specify the behavior of the subtract method to return the mock record
+        when(operationServiceImpl.subtract(request)).thenReturn(expectedRecord);
 
         Record result = operationServiceImpl.subtract(request);
 
         // assertions to verify that the result matches the expected record
+        Assertions.assertNotNull(result);
         Assertions.assertEquals(expectedRecord.getId(), result.getId());
         Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
         Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
