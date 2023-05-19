@@ -181,3 +181,11 @@ databaseChangeLog:
               - column:
                   name: balance
                   valueNumeric: 100
+  - changeSet:
+      id: 7
+      author: Franklin Castillo
+      comment: user_balance is now available inside the user entity
+      changes:
+        - dropColumn:
+            tableName: record
+            columnName: user_balance
