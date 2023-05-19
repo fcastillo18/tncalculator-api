@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: Franklin Castillo
+      comment: creating initial table structure
       changes:
         - createTable:
             tableName: user
@@ -87,6 +88,7 @@ databaseChangeLog:
   - changeSet:
       id: 2
       author: Franklin Castillo
+      comment: inserting sample user rows into the database
       changes:
         - insert:
             tableName: user
@@ -105,6 +107,7 @@ databaseChangeLog:
   - changeSet:
       id: 3
       author: Franklin Castillo
+      comment: inserting operations row into the database
       changes:
         - insert:
             tableName: operation
@@ -145,6 +148,7 @@ databaseChangeLog:
   - changeSet:
         id: 4
         author: Franklin Castillo
+        comment: uppercase type operation
         changes:
           - update:
               tableName: operation
@@ -152,3 +156,28 @@ databaseChangeLog:
                 - column:
                     name: type
                     valueComputed: "UPPER(type)"
+  - changeSet:
+      id: 5
+      comment: adding balance column to user
+      author: Franklin Castillo
+      changes:
+        - addColumn:
+            tableName: user
+            columns:
+              - column:
+                  name: balance
+                  type: decimal(10,2)
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 6
+      author: Franklin Castillo
+      comment: set user balance to 100
+      changes:
+        - update:
+            tableName: user
+            columns:
+              - column:
+                  name: balance
+                  valueNumeric: 100

@@ -3,6 +3,8 @@ package com.tncalculator.tncalculatorapi.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "user")
 @Getter
@@ -25,5 +27,7 @@ public class User {
     @Column(nullable = false)
     private String status;
 
-    // other fields if necessary
+    @Column(nullable = false)
+    private BigDecimal balance;
+
 }
