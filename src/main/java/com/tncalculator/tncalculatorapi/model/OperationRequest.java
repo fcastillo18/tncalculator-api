@@ -2,6 +2,8 @@ package com.tncalculator.tncalculatorapi.model;
 
 import lombok.*;
 
+import java.util.Optional;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -12,9 +14,22 @@ public class OperationRequest {
     private Long userId;
     private double num1;
     private double num2;
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private Optional<String> randomString;
 
     public OperationRequest(Long userId, double num1) {
         this.userId = userId;
         this.num1 = num1;
+    }
+
+    public OperationRequest(long l, double num1, double num2) {
+        this.userId = l;
+        this.num1 = num1;
+        this.num2 = num2;
+    }
+
+    public OperationRequest(Long userId, String randomString) {
+        this.userId = userId;
+        this.randomString = Optional.ofNullable(randomString);
     }
 }
