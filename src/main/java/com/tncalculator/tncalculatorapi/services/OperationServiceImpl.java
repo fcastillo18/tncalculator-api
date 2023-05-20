@@ -32,7 +32,6 @@ public class OperationServiceImpl implements OperationService {
     }
 
     // Utility method to create a record and save it to the database.
-    // TODO this method can be moved to a separate class and reused in other services if needed.
     private Record createRecord(OperationRequest request, Operation.OperationType operationType) {
         Operation operation = operationRepository.findByType(operationType);
         User user = userRepository.findById(request.getUserId()).orElseThrow();
@@ -43,13 +42,14 @@ public class OperationServiceImpl implements OperationService {
             amount = BigDecimal.valueOf(request.getNum1() + request.getNum2());
         } else if (operationType == Operation.OperationType.SUBTRACTION) {
             amount = BigDecimal.valueOf(request.getNum1() - request.getNum2());
-        } else {
+        } else if (operationType == Operation.OperationType.MULTIPLICATION) {
+            amount = BigDecimal.valueOf(request.getNum1() * request.getNum2());
+        }else {
             // Handle other operation types if needed
             throw new CustomException("Unsupported operation type: " + operationType);
         }
 
         Record record = Record.builder()
-                .id(1L)
                 .user(user)
                 .operation(operation)
                 .amount(amount)
@@ -74,6 +74,13 @@ public class OperationServiceImpl implements OperationService {
     @UpdateUserBalance
     public Record add(OperationRequest request) {
         return createRecord(request, Operation.OperationType.ADDITION);
+    }
+
+    @Override
+    @ValidateUserBalance(operation = Operation.OperationType.ADDITION)
+    @UpdateUserBalance
+    public Record multiply(OperationRequest request) {
+        return createRecord(request, Operation.OperationType.MULTIPLICATION);
     }
 
 }

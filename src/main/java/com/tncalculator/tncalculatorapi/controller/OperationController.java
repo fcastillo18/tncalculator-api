@@ -34,4 +34,10 @@ public class OperationController {
     public Record add(@RequestBody OperationRequest request) {
         return operationServiceImpl.add(request);
     }
+
+    @PostMapping("/multiply")
+    @ResponseBody
+    public Record multiply(@RequestBody OperationRequest request) {
+        return operationServiceImpl.multiply(request);
+    }
 }
