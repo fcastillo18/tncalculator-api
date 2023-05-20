@@ -22,6 +22,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+// TODO refactor this class to reuse a bunch of code and reduce the size of the class
 @SpringBootTest
 public class OperationControllerTests {
     @Mock
@@ -39,8 +40,17 @@ public class OperationControllerTests {
     @InjectMocks
     private OperationController operationController;
 
-    @Mock
-    private OperationController operationServiceImpl;
+    @InjectMocks
+    private OperationServiceImpl operationServiceImpl;
+
+
+    private Operation getOperation(Operation.OperationType operationType, BigDecimal operationCost){
+        return Operation.builder()
+                .id(Operation.OperationType.valueOf(operationType.name()).ordinal() + 1L) // brutal force to get the "operationId"
+                .type(operationType)
+                .cost((operationCost))
+                .build();
+    }
 
     @Nested
     @DisplayName("Subtract Tests")
@@ -69,10 +79,8 @@ public class OperationControllerTests {
                     .build();
 
             // Setting the necessary properties in the operation
-            Operation operation = Operation.builder()
-                    .type(Operation.OperationType.SUBTRACTION)
-                    .cost(operationCost)
-                    .build();
+            Operation operation = getOperation(Operation.OperationType.SUBTRACTION, operationCost);
+
 
             // Setting the expected properties in the record
             Record expectedRecord = Record.builder()
@@ -106,10 +114,7 @@ public class OperationControllerTests {
             BigDecimal operationCost = BigDecimal.valueOf(10.0);
 
             // Setting the necessary properties in the operation
-            Operation operation = Operation.builder()
-                    .type(Operation.OperationType.SUBTRACTION)
-                    .cost(operationCost)
-                    .build();
+            Operation operation = getOperation(Operation.OperationType.SUBTRACTION, operationCost);
 
             // Setting the necessary properties in the user
             User user = User.builder()
@@ -176,10 +181,7 @@ public class OperationControllerTests {
                     .build();
 
             // Setting the necessary properties in the operation
-            Operation operation = Operation.builder()
-                    .type(Operation.OperationType.ADDITION)
-                    .cost(operationCost)
-                    .build();
+            Operation operation = getOperation(Operation.OperationType.ADDITION, operationCost);
 
             // Setting the expected properties in the record
             Record expectedRecord = Record.builder()
@@ -188,7 +190,6 @@ public class OperationControllerTests {
                     .operation(operation)
                     .amount(amount)
                     .build();
-
 
             when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
 
@@ -213,10 +214,7 @@ public class OperationControllerTests {
             BigDecimal operationCost = BigDecimal.valueOf(10.0);
 
             // Setting the necessary properties in the operation
-            Operation operation = Operation.builder()
-                    .type(Operation.OperationType.ADDITION)
-                    .cost(operationCost)
-                    .build();
+            Operation operation = getOperation(Operation.OperationType.ADDITION, operationCost);
 
             // Setting the necessary properties in the user
             User user = User.builder()
@@ -244,9 +242,9 @@ public class OperationControllerTests {
             when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
             when(recordRepository.save(any(Record.class))).thenReturn(expectedRecord);
             // Specify the behavior of the subtract method to return the mock record
-            when(operationServiceImpl.subtract(request)).thenReturn(expectedRecord);
+            when(operationServiceImpl.add(request)).thenReturn(expectedRecord);
 
-            Record result = operationServiceImpl.subtract(request);
+            Record result = operationServiceImpl.add(request);
 
             // assertions to verify that the result matches the expected record
             Assertions.assertNotNull(result);
