@@ -1,5 +1,6 @@
 package com.tncalculator.tncalculatorapi.aop;
 
+import com.tncalculator.tncalculatorapi.exception.CustomException;
 import com.tncalculator.tncalculatorapi.exception.InsufficientBalanceException;
 import com.tncalculator.tncalculatorapi.exception.UserNotFoundException;
 import com.tncalculator.tncalculatorapi.model.Operation;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 @Aspect
 @Component
@@ -35,7 +37,11 @@ public class UserBalanceAspect {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         BigDecimal userBalance = user.getBalance();
-        Operation operation = operationRepository.findById(request.getOperationId()).orElseThrow(() -> new IllegalArgumentException("Operation not found"));
+        Operation.OperationType requestOperationType = request.getOperationType();
+        if (requestOperationType == null || !Arrays.stream(Operation.OperationType.values()).toList().contains(requestOperationType)) {
+            throw new CustomException("Operation not found");
+        }
+        Operation operation = operationRepository.findByType(requestOperationType);
 
         if (userBalance.compareTo(operation.getCost()) < 0) {
             throw new InsufficientBalanceException("Insufficient balance");
