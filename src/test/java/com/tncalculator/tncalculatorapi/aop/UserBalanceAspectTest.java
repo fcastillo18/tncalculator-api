@@ -32,18 +32,19 @@ public class UserBalanceAspectTest {
     @InjectMocks
     private UserBalanceAspect userBalanceAspect;
 
+    private final Operation.OperationType ADDITION_TYPE = Operation.OperationType.ADDITION;
     @Test
     public void testValidateUserBalance_WithSufficientBalance() {
         // Prepare
-        OperationRequest request = new OperationRequest(1L, 10, 5, 1L) ;
+        OperationRequest request = new OperationRequest(1L, 10, 5, ADDITION_TYPE) ;
 
         User user = new User();
         user.setBalance(BigDecimal.valueOf(15));
-        Operation operation = new Operation();
+        Operation operation = new Operation(1L, ADDITION_TYPE,BigDecimal.valueOf(10));
         operation.setCost(BigDecimal.valueOf(10));
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(operationRepository.findById(1L)).thenReturn(Optional.of(operation));
+        when(operationRepository.findByType(ADDITION_TYPE)).thenReturn(operation);
 
         // Execute
         userBalanceAspect.validateUserBalance(request);
@@ -55,14 +56,14 @@ public class UserBalanceAspectTest {
     @Test
     public void testValidateUserBalance_WithInsufficientBalance() {
         // Prepare
-        OperationRequest request = new OperationRequest(1L, 10, 5, 1L) ;
+        OperationRequest request = new OperationRequest(1L, 10, 5, Operation.OperationType.ADDITION) ;
         User user = new User();
         user.setBalance(BigDecimal.valueOf(0)); // zero balance
-        Operation operation = new Operation();
+        Operation operation = new Operation(1L, ADDITION_TYPE,BigDecimal.valueOf(10));
         operation.setCost(BigDecimal.valueOf(10));
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(operationRepository.findById(1L)).thenReturn(Optional.of(operation));
+        when(operationRepository.findByType(ADDITION_TYPE)).thenReturn(operation);
 
         // Execute and Verify
         Assertions.assertThrows(InsufficientBalanceException.class, () -> userBalanceAspect.validateUserBalance(request));
