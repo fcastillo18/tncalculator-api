@@ -1,9 +1,9 @@
-package com.tncalculator.tncalculatorapi.services;
+package com.tncalculator.tncalculatorapi.services.impl;
 
 import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
-import com.tncalculator.tncalculatorapi.services.impl.UserService;
+import com.tncalculator.tncalculatorapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

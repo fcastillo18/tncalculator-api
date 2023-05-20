@@ -1,4 +1,4 @@
-package com.tncalculator.tncalculatorapi.services;
+package com.tncalculator.tncalculatorapi.services.impl;
 
 import com.tncalculator.tncalculatorapi.aop.annotation.UpdateUserBalance;
 import com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance;
@@ -10,7 +10,7 @@ import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.repository.OperationRepository;
 import com.tncalculator.tncalculatorapi.repository.RecordRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
-import com.tncalculator.tncalculatorapi.services.impl.OperationService;
+import com.tncalculator.tncalculatorapi.services.OperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +44,13 @@ public class OperationServiceImpl implements OperationService {
             amount = BigDecimal.valueOf(request.getNum1() - request.getNum2());
         } else if (operationType == Operation.OperationType.MULTIPLICATION) {
             amount = BigDecimal.valueOf(request.getNum1() * request.getNum2());
-        }else {
+        } else if (operationType == Operation.OperationType.DIVISION) {
+            // Handle division by zero case
+            if (request.getNum2() == 0) {
+                throw new CustomException("Division by zero is not allowed");
+            }
+            amount = BigDecimal.valueOf(request.getNum1() / request.getNum2());
+        } else {
             // Handle other operation types if needed
             throw new CustomException("Unsupported operation type: " + operationType);
         }
@@ -81,6 +87,13 @@ public class OperationServiceImpl implements OperationService {
     @UpdateUserBalance
     public Record multiply(OperationRequest request) {
         return createRecord(request, Operation.OperationType.MULTIPLICATION);
+    }
+
+    @Override
+    @ValidateUserBalance(operation = Operation.OperationType.DIVISION)
+    @UpdateUserBalance
+    public Record divide(OperationRequest request) {
+        return createRecord(request, Operation.OperationType.DIVISION);
     }
 
 }
