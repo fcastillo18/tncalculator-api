@@ -50,7 +50,14 @@ public class OperationServiceImpl implements OperationService {
                 throw new CustomException("Division by zero is not allowed");
             }
             amount = BigDecimal.valueOf(request.getNum1() / request.getNum2());
-        } else {
+        } else if (operationType == Operation.OperationType.SQUARE_ROOT) {
+            // Handle square root of negative number case
+            if (request.getNum1() < 0) {
+                throw new CustomException("Square root of negative number is not allowed");
+            }
+            amount = BigDecimal.valueOf(Math.sqrt(request.getNum1()));
+        }
+        else {
             // Handle other operation types if needed
             throw new CustomException("Unsupported operation type: " + operationType);
         }
@@ -94,6 +101,13 @@ public class OperationServiceImpl implements OperationService {
     @UpdateUserBalance
     public Record divide(OperationRequest request) {
         return createRecord(request, Operation.OperationType.DIVISION);
+    }
+
+    @Override
+    @ValidateUserBalance(operation = Operation.OperationType.SQUARE_ROOT)
+    @UpdateUserBalance
+    public Record squareRoot(OperationRequest request) {
+        return createRecord(request, Operation.OperationType.SQUARE_ROOT);
     }
 
 }

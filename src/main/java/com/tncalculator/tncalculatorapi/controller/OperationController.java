@@ -48,4 +48,10 @@ public class OperationController {
     public Record divide(@RequestBody OperationRequest request) {
         return operationServiceImpl.divide(request);
     }
+
+    @PostMapping("/squareRoot")
+    @ResponseBody
+    public Record square(@RequestBody OperationRequest request) {
+        return operationServiceImpl.squareRoot(request);
+    }
 }
