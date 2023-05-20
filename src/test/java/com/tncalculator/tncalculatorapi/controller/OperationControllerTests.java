@@ -75,9 +75,9 @@ public class OperationControllerTests {
             case SUBTRACTION -> operationServiceImpl.subtract(request);
             case MULTIPLICATION -> operationServiceImpl.multiply(request);
             case DIVISION -> operationServiceImpl.divide(request);
-//            case SQUARE_ROOT -> operationServiceImpl.squareRoot(request);
+            case SQUARE_ROOT -> operationServiceImpl.squareRoot(request);
 //            case RANDOM_STRING -> operationServiceImpl.randomString(request);
-            case  SQUARE_ROOT, RANDOM_STRING -> expectedRecord; // TODO will be deleted in later iterations
+            case   RANDOM_STRING -> expectedRecord; // TODO will be deleted in later iterations
             default -> throw new IllegalStateException("Unexpected value: " + operationType);
         };
     }
