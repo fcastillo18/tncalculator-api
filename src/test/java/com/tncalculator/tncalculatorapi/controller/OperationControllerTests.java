@@ -7,7 +7,7 @@ import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.repository.OperationRepository;
 import com.tncalculator.tncalculatorapi.repository.RecordRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
-import com.tncalculator.tncalculatorapi.services.OperationServiceImpl;
+import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -74,10 +74,10 @@ public class OperationControllerTests {
             case ADDITION -> operationServiceImpl.add(request);
             case SUBTRACTION -> operationServiceImpl.subtract(request);
             case MULTIPLICATION -> operationServiceImpl.multiply(request);
-//            case DIVISION -> operationServiceImpl.divide(request); // TODO will be added in later iterations
+            case DIVISION -> operationServiceImpl.divide(request);
 //            case SQUARE_ROOT -> operationServiceImpl.squareRoot(request);
 //            case RANDOM_STRING -> operationServiceImpl.randomString(request);
-            case DIVISION, SQUARE_ROOT, RANDOM_STRING -> expectedRecord; // TODO will be deleted in later iterations
+            case  SQUARE_ROOT, RANDOM_STRING -> expectedRecord; // TODO will be deleted in later iterations
             default -> throw new IllegalStateException("Unexpected value: " + operationType);
         };
     }
@@ -108,15 +108,10 @@ public class OperationControllerTests {
                 .build();
 
         // Setting the necessary properties in the request
-        OperationRequest request = OperationRequest.builder()
-                .userId(user.getId())
-                .num1(num1)
-                .num1(num2)
-                .build();
+        OperationRequest request = new OperationRequest(userId, num1, num2);
 
         // Setting the necessary properties in the operation
         Operation operation = getOperation(operationType, operationCost);
-
 
         // Setting the expected properties in the record
         Record expectedRecord = Record.builder()
@@ -124,7 +119,6 @@ public class OperationControllerTests {
                 .operation(operation)
                 .amount(amount)
                 .build();
-
 
         when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
 
@@ -141,7 +135,6 @@ public class OperationControllerTests {
     @ParameterizedTest(name = "Testing METHODS, OperationType is {0}")
     @EnumSource(Operation.OperationType.class) // It will iterate all operation, and it will run this same test for all of them
     public void testMethod(Operation.OperationType operationType) {
-
         Long userId = 1L;
         double num1 = 10.0;
         double num2 = 5.0;
@@ -150,6 +143,7 @@ public class OperationControllerTests {
         BigDecimal operationCost = BigDecimal.valueOf(10.0);
 
         // printing some info:
+        // TODO can be removed
         System.out.println("value1: "+ num1 + " value2: " + num2);
         System.out.println("OPERATION: "+ operationType);
         System.out.println("Total amount: "+ amount);
@@ -165,11 +159,7 @@ public class OperationControllerTests {
                 .build();
 
         // Setting the necessary properties in the request
-        OperationRequest request = OperationRequest.builder()
-                .userId(userId)
-                .num1(num1)
-                .num1(num2)
-                .build();
+        OperationRequest request = new OperationRequest(userId, num1, num2);
 
         // Setting the expected properties in the record
         Record expectedRecord = Record.builder()
