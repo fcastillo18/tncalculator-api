@@ -60,15 +60,11 @@ public class OperationControllerTests {
             case MULTIPLICATION -> num1.multiply(num2);
             case DIVISION -> num1.divide(num2, RoundingMode.HALF_UP);
             case SQUARE_ROOT -> BigDecimal.valueOf(Math.sqrt(num1.doubleValue()));
-            case RANDOM_STRING -> {
-                // Perform the logic for RANDOM_STRING operation
-                // Return the result as a BigDecimal
-                yield BigDecimal.ZERO;
-            }
+            case RANDOM_STRING -> BigDecimal.valueOf(Math.random() * 1000).setScale(2, RoundingMode.HALF_UP);
         };
     }
 
-    private Record getRecordByOperationType(OperationRequest request, Operation.OperationType operationType, Record expectedRecord) {
+    private Record getRecordByOperationType(OperationRequest request, Operation.OperationType operationType) {
 
         return switch (operationType) {
             case ADDITION -> operationServiceImpl.add(request);
@@ -76,9 +72,7 @@ public class OperationControllerTests {
             case MULTIPLICATION -> operationServiceImpl.multiply(request);
             case DIVISION -> operationServiceImpl.divide(request);
             case SQUARE_ROOT -> operationServiceImpl.squareRoot(request);
-//            case RANDOM_STRING -> operationServiceImpl.randomString(request);
-            case   RANDOM_STRING -> expectedRecord; // TODO will be deleted in later iterations
-            default -> throw new IllegalStateException("Unexpected value: " + operationType);
+            case RANDOM_STRING -> operationServiceImpl.randomString(request);
         };
     }
 
@@ -88,7 +82,7 @@ public class OperationControllerTests {
     @EnumSource(Operation.OperationType.class) // It will iterate all operation, and it will run this same test for all of them
     public void testEndpoint(Operation.OperationType operationType) {
         System.out.println("OPERATION: "+ operationType);
-        Long userId = 1L;
+        long userId = 1L;
         double num1 = 10.0;
         double num2 = 5.0;
         BigDecimal amount = performOperation(operationType, BigDecimal.valueOf(num1), BigDecimal.valueOf(num2));
@@ -135,7 +129,7 @@ public class OperationControllerTests {
     @ParameterizedTest(name = "Testing METHODS, OperationType is {0}")
     @EnumSource(Operation.OperationType.class) // It will iterate all operation, and it will run this same test for all of them
     public void testMethod(Operation.OperationType operationType) {
-        Long userId = 1L;
+        long userId = 1L;
         double num1 = 10.0;
         double num2 = 5.0;
         BigDecimal amount = performOperation(operationType, BigDecimal.valueOf(num1), BigDecimal.valueOf(num2));
@@ -173,9 +167,7 @@ public class OperationControllerTests {
         when(userRepository.findById(request.getUserId())).thenReturn(Optional.of(user));
         when(recordRepository.save(any(Record.class))).thenReturn(expectedRecord);
 
-        // TODO expectedRecord is not really needed in this scenario it should be deleted when all operations type
-        //  are implemented in operationServiceImplHelper
-        Record result = getRecordByOperationType(request, operationType, expectedRecord);
+        Record result = getRecordByOperationType(request, operationType);
 
         // assertions to verify that the result matches the expected record
         Assertions.assertNotNull(result);

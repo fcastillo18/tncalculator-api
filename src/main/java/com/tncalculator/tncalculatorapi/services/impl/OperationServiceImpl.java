@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Service
@@ -56,6 +57,8 @@ public class OperationServiceImpl implements OperationService {
                 throw new CustomException("Square root of negative number is not allowed");
             }
             amount = BigDecimal.valueOf(Math.sqrt(request.getNum1()));
+        } else if (operationType == Operation.OperationType.RANDOM_STRING) {
+            amount = BigDecimal.valueOf(Math.random() * 1000).setScale(2, RoundingMode.HALF_UP);
         }
         else {
             // Handle other operation types if needed
@@ -108,6 +111,13 @@ public class OperationServiceImpl implements OperationService {
     @UpdateUserBalance
     public Record squareRoot(OperationRequest request) {
         return createRecord(request, Operation.OperationType.SQUARE_ROOT);
+    }
+
+    @Override
+    @ValidateUserBalance(operation = Operation.OperationType.RANDOM_STRING)
+    @UpdateUserBalance
+    public Record randomString(OperationRequest request) {
+        return createRecord(request, Operation.OperationType.RANDOM_STRING);
     }
 
 }
