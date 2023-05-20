@@ -46,7 +46,6 @@ public class OperationControllerTests {
 
     private Operation getOperation(Operation.OperationType operationType, BigDecimal operationCost){
         return Operation.builder()
-                .id(Operation.OperationType.valueOf(operationType.name()).ordinal() + 1L) // brutal force to get the "operationId"
                 .type(operationType)
                 .cost((operationCost))
                 .build();

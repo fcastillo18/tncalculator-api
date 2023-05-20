@@ -2,6 +2,7 @@ package com.tncalculator.tncalculatorapi.services;
 
 import com.tncalculator.tncalculatorapi.aop.annotation.UpdateUserBalance;
 import com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance;
+import com.tncalculator.tncalculatorapi.exception.CustomException;
 import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
@@ -44,7 +45,7 @@ public class OperationServiceImpl implements OperationService {
             amount = BigDecimal.valueOf(request.getNum1() - request.getNum2());
         } else {
             // Handle other operation types if needed
-            throw new UnsupportedOperationException("Unsupported operation type: " + operationType);
+            throw new CustomException("Unsupported operation type: " + operationType);
         }
 
         Record record = Record.builder()
@@ -62,14 +63,14 @@ public class OperationServiceImpl implements OperationService {
 
     // user balance tracking for each request each manage by these two annotations and using AOP
     @Override
-    @ValidateUserBalance
+    @ValidateUserBalance(operation = Operation.OperationType.SUBTRACTION)
     @UpdateUserBalance
     public Record subtract(OperationRequest request) {
         return createRecord(request, Operation.OperationType.SUBTRACTION);
     }
 
     @Override
-    @ValidateUserBalance
+    @ValidateUserBalance(operation = Operation.OperationType.ADDITION)
     @UpdateUserBalance
     public Record add(OperationRequest request) {
         return createRecord(request, Operation.OperationType.ADDITION);

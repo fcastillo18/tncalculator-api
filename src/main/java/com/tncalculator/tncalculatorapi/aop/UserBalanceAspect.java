@@ -1,5 +1,6 @@
 package com.tncalculator.tncalculatorapi.aop;
 
+import com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance;
 import com.tncalculator.tncalculatorapi.exception.CustomException;
 import com.tncalculator.tncalculatorapi.exception.InsufficientBalanceException;
 import com.tncalculator.tncalculatorapi.exception.UserNotFoundException;
@@ -31,14 +32,14 @@ public class UserBalanceAspect {
         this.operationRepository = operationRepository;
     }
 
-    @Before("@annotation(com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance) && args(request)")
-    public void validateUserBalance(OperationRequest request) {
+    @Before("@annotation(validateUserBalance) && args(request)")
+    public void validateUserBalance(OperationRequest request, ValidateUserBalance validateUserBalance) {
         Long userId = request.getUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         BigDecimal userBalance = user.getBalance();
-        // FIXME I need to find a better way to do this and get rid of the getOperationType property
-        Operation.OperationType requestOperationType = request.getOperationType();
+        Operation.OperationType requestOperationType = validateUserBalance.operation();
+
         if (requestOperationType == null || !Arrays.stream(Operation.OperationType.values()).toList().contains(requestOperationType)) {
             throw new CustomException("Operation not found");
         }
