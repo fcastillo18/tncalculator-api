@@ -54,4 +54,10 @@ public class OperationController {
     public Record square(@RequestBody OperationRequest request) {
         return operationServiceImpl.squareRoot(request);
     }
+
+    @PostMapping("/randomString")
+    @ResponseBody
+    public Record randomString(@RequestBody OperationRequest request) {
+        return operationServiceImpl.randomString(request);
+    }
 }

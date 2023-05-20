@@ -15,4 +15,6 @@ public interface OperationService {
     Record divide(OperationRequest request);
 
     Record squareRoot(OperationRequest request);
+
+    Record randomString(OperationRequest request);
 }
