@@ -37,6 +37,7 @@ public class UserBalanceAspect {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
         BigDecimal userBalance = user.getBalance();
+        // FIXME I need to find a better way to do this and get rid of the getOperationType property
         Operation.OperationType requestOperationType = request.getOperationType();
         if (requestOperationType == null || !Arrays.stream(Operation.OperationType.values()).toList().contains(requestOperationType)) {
             throw new CustomException("Operation not found");
