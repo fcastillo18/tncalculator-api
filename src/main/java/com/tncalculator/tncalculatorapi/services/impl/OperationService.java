@@ -8,4 +8,5 @@ public interface OperationService {
 
     Record subtract(OperationRequest request);
     Record add(OperationRequest request);
+    Record multiply(OperationRequest request);
 }
