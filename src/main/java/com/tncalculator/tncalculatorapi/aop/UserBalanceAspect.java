@@ -37,6 +37,8 @@ public class UserBalanceAspect {
         Long userId = request.getUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
+        // TODO validate user status (active, inactive) to avoid balance update and throw exception if user is inactive
+
         BigDecimal userBalance = user.getBalance();
         Operation.OperationType requestOperationType = validateUserBalance.operation();
 
@@ -48,6 +50,7 @@ public class UserBalanceAspect {
         if (userBalance.compareTo(operation.getCost()) < 0) {
             throw new InsufficientBalanceException("Insufficient balance");
         }
+
     }
 
     @AfterReturning(value = "@annotation(com.tncalculator.tncalculatorapi.aop.annotation.UpdateUserBalance)", returning = "record")
