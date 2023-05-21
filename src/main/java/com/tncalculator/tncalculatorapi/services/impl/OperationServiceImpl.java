@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class OperationServiceImpl implements OperationService {
@@ -118,6 +119,11 @@ public class OperationServiceImpl implements OperationService {
     @UpdateUserBalance
     public Record randomString(OperationRequest request) {
         return createRecord(request, Operation.OperationType.RANDOM_STRING);
+    }
+
+    @Override
+    public List<Operation> getAllOperations() {
+        return operationRepository.findAll();
     }
 
 }

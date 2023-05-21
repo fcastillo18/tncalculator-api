@@ -8,7 +8,9 @@ import com.tncalculator.tncalculatorapi.repository.OperationRepository;
 import com.tncalculator.tncalculatorapi.repository.RecordRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
@@ -17,13 +19,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-// TODO refactor this class to reuse a bunch of code and reduce the size of the class.
-// TODO Try to create simple test that with customize parameters
 @SpringBootTest
 public class OperationControllerTests {
     @Mock
@@ -43,7 +45,6 @@ public class OperationControllerTests {
 
     @InjectMocks
     private OperationServiceImpl operationServiceImpl;
-
 
     private Operation getOperation(Operation.OperationType operationType, BigDecimal operationCost){
         return Operation.builder()
@@ -175,5 +176,39 @@ public class OperationControllerTests {
         Assertions.assertEquals(expectedRecord.getUser(), result.getUser());
         Assertions.assertEquals(expectedRecord.getOperation(), result.getOperation());
     }
+
+    @Test
+    public void testGetAllOperations() {
+        // Mock the data
+        Operation operation1 = Operation.builder()
+                .id(1L)
+                .type(Operation.OperationType.ADDITION)
+                .cost(BigDecimal.valueOf(10))
+                .build();
+
+        Operation operation2 = Operation.builder()
+                .id(2L)
+                .type(Operation.OperationType.SUBTRACTION)
+                .cost(BigDecimal.valueOf(10))
+                .build();
+
+        List<Operation> mockOperations = Arrays.asList(operation1, operation2);
+
+        // Set up the mock behavior
+        when(operationService.getAllOperations()).thenReturn(mockOperations);
+
+        // Call the method under test
+        List<Operation> result = operationController.getAllOperations();
+
+        // Assert the result
+        Assertions.assertEquals(mockOperations.size(), result.size());
+        Assertions.assertEquals(mockOperations.get(0).getId(), result.get(0).getId());
+        Assertions.assertEquals(mockOperations.get(1).getId(), result.get(1).getId());
+        Assertions.assertEquals(mockOperations.get(0).getType(), result.get(0).getType());
+        Assertions.assertEquals(mockOperations.get(1).getType(), result.get(1).getType());
+        Assertions.assertEquals(mockOperations.get(0).getCost(), result.get(0).getCost());
+        Assertions.assertEquals(mockOperations.get(1).getCost(), result.get(1).getCost());
+    }
+
 
 }
