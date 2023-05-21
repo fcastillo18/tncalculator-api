@@ -26,4 +26,16 @@ public class UserController {
         return userServiceImpl.getAllUsers();
     }
 
+    @PostMapping("/create")
+    @ResponseBody
+    public User createUser(@RequestBody User user) {
+        return userServiceImpl.createUser(user);
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    public User updateUser(@RequestBody User user) {
+        return userServiceImpl.updateUser(user);
+    }
+
 }
