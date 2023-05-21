@@ -1,9 +1,10 @@
 package com.tncalculator.tncalculatorapi.services;
 
-import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.User;
+
+import java.util.List;
 
 public interface UserService {
 
-    public boolean hasSufficientBalance(User user, Operation operation);
+    List<User> getAllUsers();
 }
