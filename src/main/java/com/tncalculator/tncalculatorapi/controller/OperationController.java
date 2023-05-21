@@ -1,11 +1,14 @@
 package com.tncalculator.tncalculatorapi.controller;
 
+import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/operation")
@@ -59,5 +62,11 @@ public class OperationController {
     @ResponseBody
     public Record randomString(@RequestBody OperationRequest request) {
         return operationServiceImpl.randomString(request);
+    }
+
+    @GetMapping("/all")
+    @ResponseBody
+    public List<Operation> getAllOperations() {
+        return operationServiceImpl.getAllOperations();
     }
 }
