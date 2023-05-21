@@ -36,4 +36,7 @@ public class Record {
 
     @Column(nullable = false)
     private LocalDateTime date;
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 }
