@@ -1,7 +1,10 @@
 package com.tncalculator.tncalculatorapi.services;
 
+import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
+
+import java.util.List;
 
 
 public interface OperationService {
@@ -17,4 +20,6 @@ public interface OperationService {
     Record squareRoot(OperationRequest request);
 
     Record randomString(OperationRequest request);
+
+    List<Operation> getAllOperations();
 }
