@@ -11,13 +11,24 @@ import com.tncalculator.tncalculatorapi.repository.OperationRepository;
 import com.tncalculator.tncalculatorapi.repository.RecordRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
 import com.tncalculator.tncalculatorapi.services.OperationService;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OperationServiceImpl implements OperationService {
@@ -121,9 +132,37 @@ public class OperationServiceImpl implements OperationService {
         return createRecord(request, Operation.OperationType.RANDOM_STRING);
     }
 
+    // TODO see how we can reuse some of the code bellow between this /user and /record endpoints. A common util can be created
     @Override
-    public List<Operation> getAllOperations() {
-        return operationRepository.findAll();
+    public Page<Operation> getAllOperationsWithFilterAndPagination(Map<String, String> filters, int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Create a new HashMap to store the modified filters
+        Map<String, String> modifiedFilters = new HashMap<>(filters);
+
+        // Remove the "page" and "size" keys from the modified filters
+        modifiedFilters.remove("page");
+        modifiedFilters.remove("size");
+
+        if (!modifiedFilters.isEmpty()) {
+            Specification<Operation> specification = (root, query, criteriaBuilder) -> {
+                List<Predicate> predicates = new ArrayList<>();
+                for (Map.Entry<String, String> entry : modifiedFilters.entrySet()) {
+                    String fieldName = entry.getKey();
+                    String fieldValue = entry.getValue();
+                    if (!StringUtils.isEmpty(fieldName) && !StringUtils.isEmpty(fieldValue)) {
+                        Path<String> path = root.get(fieldName);
+                        predicates.add(criteriaBuilder.equal(path, fieldValue));
+                    }
+                }
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            };
+
+            return operationRepository.findAll(specification, pageable);
+        }
+
+        return operationRepository.findAll(pageable);
     }
 
 }

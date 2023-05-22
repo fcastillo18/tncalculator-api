@@ -17,7 +17,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-// TODO integration tests (e2e) can be added instead of unit this test to simulate user real actions
 @SpringBootTest
 public class RecordServiceImplTests {
 

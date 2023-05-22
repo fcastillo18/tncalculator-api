@@ -3,10 +3,11 @@ package com.tncalculator.tncalculatorapi.controller;
 import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -21,9 +22,10 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    @ResponseBody
-    public List<User> getAll() {
-        return userServiceImpl.getAllUsers();
+    public Page<User> getAllRecords(@RequestParam(required = false) Map<String, String> filters,
+                                      @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                      @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
+        return userServiceImpl.getAllUsersWithFilterAndPagination(filters, page, size);
     }
 
     @PostMapping("/create")
