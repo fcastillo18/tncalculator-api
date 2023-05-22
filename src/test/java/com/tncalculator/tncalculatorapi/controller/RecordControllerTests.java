@@ -7,14 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+// TODO integration tests (e2e) can be added instead of unit this test to simulate user real actions
 @SpringBootTest
 public class RecordControllerTests {
 
@@ -26,22 +30,34 @@ public class RecordControllerTests {
 
     @Test
     public void testGetAllRecords() {
-        // Mock data
-        Record record1 = new Record();
-        record1.setId(1L);
-        Record record2 = new Record();
-        record2.setId(2L);
+        // Create a sample filters map
+        Map<String, String> filters = new HashMap<>();
+        filters.put("userId", "1");
+        filters.put("operationId", "2");
+
+        // Create a sample page and size
+        int page = 0;
+        int size = 10;
+
+        // Create a sample page of records
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        @SuppressWarnings("unchecked")
+        Page<Record> expectedPage = mock(Page.class);
 
         // Mock service
-        when(recordService.getAllRecords()).thenReturn(Arrays.asList(record1, record2));
+        doReturn(pageable).when(expectedPage).getPageable();
+        doReturn(1L).when(expectedPage).getTotalElements();
+        doReturn(expectedPage.getContent()).when(expectedPage).getContent();
+        doReturn(expectedPage).when(recordService).getAllRecordsWithFilterAndPagination(filters, page, size);
 
-        // Test
-        List<Record> records = recordController.getAllRecords();
+        when(recordService.getAllRecordsWithFilterAndPagination(filters, page, size)).thenReturn(expectedPage);
 
-        // Verify
-        Assertions.assertEquals(2, records.size());
-        Assertions.assertEquals(record1, records.get(0));
-        Assertions.assertEquals(record2, records.get(1));
+        // Call the method under test
+        Page<Record> result = recordController.getAllRecords(filters, page, size);
+
+        // Verify the method calls and assertions
+        verify(recordService, times(1)).getAllRecordsWithFilterAndPagination(filters, page, size);
+        Assertions.assertEquals(expectedPage, result);
     }
 
     @Test

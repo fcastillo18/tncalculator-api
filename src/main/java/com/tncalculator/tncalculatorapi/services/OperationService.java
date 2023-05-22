@@ -3,8 +3,9 @@ package com.tncalculator.tncalculatorapi.services;
 import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
+import java.util.Map;
 
 
 public interface OperationService {
@@ -21,5 +22,5 @@ public interface OperationService {
 
     Record randomString(OperationRequest request);
 
-    List<Operation> getAllOperations();
+    Page<Operation> getAllOperationsWithFilterAndPagination(Map<String, String> filters, int page, int size);
 }
