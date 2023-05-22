@@ -14,14 +14,19 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+// TODO integration tests (e2e) can be added instead of unit this test to simulate user real actions
 @SpringBootTest
 public class OperationControllerTests {
     @Mock
@@ -80,39 +85,36 @@ public class OperationControllerTests {
         Assertions.assertEquals(expectedRecord.getAmount(), result.getAmount());
     }
 
-
     @Test
     public void testGetAllOperations() {
-        // Mock the data
-        Operation operation1 = Operation.builder()
-                .id(1L)
-                .type(Operation.OperationType.ADDITION)
-                .cost(BigDecimal.valueOf(10))
-                .build();
+        // Create a sample filters map
+        Map<String, String> filters = new HashMap<>();
+        filters.put("id", "1");
+        filters.put("type", "ADDITION");
 
-        Operation operation2 = Operation.builder()
-                .id(2L)
-                .type(Operation.OperationType.SUBTRACTION)
-                .cost(BigDecimal.valueOf(10))
-                .build();
+        // Create a sample page and size
+        int page = 0;
+        int size = 10;
 
-        List<Operation> mockOperations = Arrays.asList(operation1, operation2);
+        // Create a sample page of records
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        @SuppressWarnings("unchecked")
+        Page<Operation> expectedPage = mock(Page.class);
 
-        // Set up the mock behavior
-        when(operationService.getAllOperations()).thenReturn(mockOperations);
+        // Mock service
+        doReturn(pageable).when(expectedPage).getPageable();
+        doReturn(1L).when(expectedPage).getTotalElements();
+        doReturn(expectedPage.getContent()).when(expectedPage).getContent();
+        doReturn(expectedPage).when(operationService).getAllOperationsWithFilterAndPagination(filters, page, size);
+
+        when(operationService.getAllOperationsWithFilterAndPagination(filters, page, size)).thenReturn(expectedPage);
 
         // Call the method under test
-        List<Operation> result = operationController.getAllOperations();
+        Page<Operation> result = operationService.getAllOperationsWithFilterAndPagination(filters, page, size);
 
-        // Assert the result
-        Assertions.assertEquals(mockOperations.size(), result.size());
-        Assertions.assertEquals(mockOperations.get(0).getId(), result.get(0).getId());
-        Assertions.assertEquals(mockOperations.get(1).getId(), result.get(1).getId());
-        Assertions.assertEquals(mockOperations.get(0).getType(), result.get(0).getType());
-        Assertions.assertEquals(mockOperations.get(1).getType(), result.get(1).getType());
-        Assertions.assertEquals(mockOperations.get(0).getCost(), result.get(0).getCost());
-        Assertions.assertEquals(mockOperations.get(1).getCost(), result.get(1).getCost());
+        // Verify the method calls and assertions
+        verify(operationService, times(1)).getAllOperationsWithFilterAndPagination(filters, page, size);
+        Assertions.assertEquals(expectedPage, result);
     }
-
 
 }

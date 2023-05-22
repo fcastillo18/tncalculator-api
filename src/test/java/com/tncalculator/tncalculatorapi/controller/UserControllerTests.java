@@ -1,6 +1,5 @@
 package com.tncalculator.tncalculatorapi.controller;
 
-import com.tncalculator.tncalculatorapi.constant.Constants;
 import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.services.impl.UserServiceImpl;
 import org.junit.jupiter.api.Assertions;
@@ -10,14 +9,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+// TODO integration tests (e2e) can be added instead of unit this test to simulate user real actions
 @SpringBootTest
 public class UserControllerTests {
 
@@ -34,33 +38,38 @@ public class UserControllerTests {
     }
 
     @Test
-    void testGetAllUsers() {
-        // Prepare
-        List<User> users = new ArrayList<>();
-        users.add(User.builder()
-                .id(1L)
-                .username("franklin@mail.com")
-                .password("password")
-                .status(Constants.UserStatus.ACTIVE.toString())
-                .balance(BigDecimal.valueOf(100.0))
-                .build());
-        users.add(User.builder()
-                .id(2L)
-                .username("jose@mail.com")
-                .password("password")
-                .status(Constants.UserStatus.ACTIVE.toString())
-                .balance(BigDecimal.valueOf(200.0))
-                .build());
-        when(userServiceImpl.getAllUsers()).thenReturn(users);
+    public void testGetAllUsers() {
+        // Create a sample filters map
+        Map<String, String> filters = new HashMap<>();
+        filters.put("id", "1");
+        filters.put("username", "franklin@mail.com");
+        filters.put("status", "active");
 
-        // Execute
-        List<User> result = userController.getAll();
+        // Create a sample page and size
+        int page = 0;
+        int size = 10;
 
-        // Verify
-        Assertions.assertEquals(2, result.size());
-        Assertions.assertEquals("franklin@mail.com", result.get(0).getUsername());
-        Assertions.assertEquals(Constants.UserStatus.ACTIVE.toString(), result.get(1).getStatus());
+        // Create a sample page of records
+        Pageable pageable = PageRequest.of(page, size, Sort.Direction.DESC, "id");
+        @SuppressWarnings("unchecked")
+        Page<User> expectedPage = mock(Page.class);
+
+        // Mock service
+        doReturn(pageable).when(expectedPage).getPageable();
+        doReturn(1L).when(expectedPage).getTotalElements();
+        doReturn(expectedPage.getContent()).when(expectedPage).getContent();
+        doReturn(expectedPage).when(userServiceImpl).getAllUsersWithFilterAndPagination(filters, page, size);
+
+        when(userServiceImpl.getAllUsersWithFilterAndPagination(filters, page, size)).thenReturn(expectedPage);
+
+        // Call the method under test
+        Page<User> result = userServiceImpl.getAllUsersWithFilterAndPagination(filters, page, size);
+
+        // Verify the method calls and assertions
+        verify(userServiceImpl, times(1)).getAllUsersWithFilterAndPagination(filters, page, size);
+        Assertions.assertEquals(expectedPage, result);
     }
+
 
 
     @Test

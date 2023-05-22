@@ -5,10 +5,11 @@ import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/operation")
@@ -65,8 +66,9 @@ public class OperationController {
     }
 
     @GetMapping("/all")
-    @ResponseBody
-    public List<Operation> getAllOperations() {
-        return operationServiceImpl.getAllOperations();
+    public Page<Operation> getAllOperations(@RequestParam(required = false) Map<String, String> filters,
+                                            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                            @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
+        return operationServiceImpl.getAllOperationsWithFilterAndPagination(filters, page, size);
     }
 }
