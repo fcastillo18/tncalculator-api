@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  server:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+    links:
+      - "mysqldb:tncalculatordb"
+    # this link fix the error: https://gist.github.com/petertogara/9145e80d988d7cbdb2841df18827403a
+    # Source: https://gist.github.com/petertogara/9145e80d988d7cbdb2841df18827403a
+  mysqldb:
+#    platform: linux/x86_64 #for unix env
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: tncalculatordb
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+
+
