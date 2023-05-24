@@ -85,26 +85,6 @@ databaseChangeLog:
               - column:
                   name: date
                   type: datetime
-
-  - changeSet:
-      id: 2
-      author: Franklin Castillo
-      comment: inserting sample user rows into the database
-      changes:
-        - insert:
-            tableName: user
-            columns:
-              - column: { name: id, value: 1 }
-              - column: { name: username, value: "user1@example.com" }
-              - column: { name: password, value: "password1" }
-              - column: { name: status, value: "active" }
-        - insert:
-            tableName: user
-            columns:
-              - column: { name: id, value: 2 }
-              - column: { name: username, value: "user2@example.com" }
-              - column: { name: password, value: "password2" }
-              - column: { name: status, value: "active" }
   - changeSet:
       id: 3
       author: Franklin Castillo
@@ -202,3 +182,53 @@ databaseChangeLog:
                   name: is_deleted
                   type: boolean
                   defaultValue: false
+  - changeSet:
+      id: 9
+      comment: createTable-role
+      author: Franklin Castillo
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 10
+      author: liquibase
+      changes:
+        - addColumn:
+            tableName: user
+            columns:
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false # fix this ... FALSE
+                    unique: false
+  - changeSet:
+      id: 11
+      comment: insertRoles
+      author: Franklin Castillo
+      changes:
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_USER
+        - insert:
+            tableName: roles
+            columns:
+              - column:
+                  name: name
+                  value: ROLE_ADMIN

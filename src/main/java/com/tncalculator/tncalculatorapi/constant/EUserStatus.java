@@ -1,13 +1,12 @@
 package com.tncalculator.tncalculatorapi.constant;
 
-public class Constants {
-    public enum UserStatus {
+public enum EUserStatus {
         ACTIVE("active"),
         INACTIVE("inactive");
 
         private final String status;
 
-        UserStatus(String status) {
+        EUserStatus(String status) {
             this.status = status;
         }
 
@@ -16,5 +15,3 @@ public class Constants {
         }
 
     }
-
-}
