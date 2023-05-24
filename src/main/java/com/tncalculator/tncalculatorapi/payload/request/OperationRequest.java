@@ -1,4 +1,4 @@
-package com.tncalculator.tncalculatorapi.model;
+package com.tncalculator.tncalculatorapi.payload.request;
 
 import lombok.*;
 

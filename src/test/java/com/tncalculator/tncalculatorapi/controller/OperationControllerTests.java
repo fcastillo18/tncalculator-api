@@ -2,9 +2,9 @@ package com.tncalculator.tncalculatorapi.controller;
 
 import com.tncalculator.tncalculatorapi.TestUtil;
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.model.User;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 // TODO integration tests (e2e) can be added instead of unit this test to simulate user real actions
@@ -73,10 +72,9 @@ public class OperationControllerTests {
                 .operation(operation)
                 .amount(amount)
                 .build();
-
-        when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
-
-        Record result = operationController.subtract(request);
+//        when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
+        testUtil.mockOperationByOperationType(operationType, operationService, expectedRecord);
+        Record result = testUtil.getRecordByOperationType(request, operationType, operationService);
 
         // assertions to verify that the result matches the expected record
         Assertions.assertEquals(expectedRecord.getId(), result.getId());

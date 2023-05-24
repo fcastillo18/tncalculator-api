@@ -1,11 +1,14 @@
 package com.tncalculator.tncalculatorapi.controller;
 
+import com.tncalculator.tncalculatorapi.Util.AppUtil;
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.model.OperationRequest;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
+import com.tncalculator.tncalculatorapi.payload.response.OperationResponse;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +17,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/operation")
 @Validated
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 public class OperationController {
 
     private final OperationServiceImpl operationServiceImpl;
+    private final AppUtil appUtil;
 
     @Autowired
-    public OperationController(OperationServiceImpl operationServiceImpl) {
+    public OperationController(OperationServiceImpl operationServiceImpl, AppUtil appUtil) {
         this.operationServiceImpl = operationServiceImpl;
+        this.appUtil = appUtil;
     }
 
     @GetMapping("/hello")
@@ -31,38 +37,44 @@ public class OperationController {
 
     @PostMapping("/subtract")
     @ResponseBody
-    public Record subtract(@RequestBody OperationRequest request) {
-        return operationServiceImpl.subtract(request);
+    public OperationResponse subtract(@RequestBody OperationRequest request) {
+        Record record = operationServiceImpl.subtract(request);
+        return appUtil.mapRecordToResponse(record);
     }
 
     @PostMapping("/add")
     @ResponseBody
-    public Record add(@RequestBody OperationRequest request) {
-        return operationServiceImpl.add(request);
+    public OperationResponse add(@RequestBody OperationRequest request) {
+        Record record = operationServiceImpl.add(request);
+        return appUtil.mapRecordToResponse(record);
     }
 
     @PostMapping("/multiply")
     @ResponseBody
-    public Record multiply(@RequestBody OperationRequest request) {
-        return operationServiceImpl.multiply(request);
+    public OperationResponse multiply(@RequestBody OperationRequest request) {
+        Record record = operationServiceImpl.multiply(request);
+        return appUtil.mapRecordToResponse(record);
     }
 
     @PostMapping("/divide")
     @ResponseBody
-    public Record divide(@RequestBody OperationRequest request) {
-        return operationServiceImpl.divide(request);
+    public OperationResponse divide(@RequestBody OperationRequest request) {
+        Record record = operationServiceImpl.divide(request);
+        return appUtil.mapRecordToResponse(record);
     }
 
     @PostMapping("/squareRoot")
     @ResponseBody
-    public Record square(@RequestBody OperationRequest request) {
-        return operationServiceImpl.squareRoot(request);
+    public OperationResponse square(@RequestBody OperationRequest request) {
+        Record record = operationServiceImpl.squareRoot(request);
+        return appUtil.mapRecordToResponse(record);
     }
 
     @PostMapping("/randomString")
     @ResponseBody
-    public Record randomString(@RequestBody OperationRequest request) {
-        return operationServiceImpl.randomString(request);
+    public OperationResponse randomString(@RequestBody OperationRequest request) {
+        Record record = operationServiceImpl.randomString(request);
+        return appUtil.mapRecordToResponse(record);
     }
 
     @GetMapping("/all")

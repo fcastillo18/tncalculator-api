@@ -3,7 +3,7 @@ package com.tncalculator.tncalculatorapi.aop;
 import com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance;
 import com.tncalculator.tncalculatorapi.exception.InsufficientBalanceException;
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.model.OperationRequest;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.repository.OperationRepository;

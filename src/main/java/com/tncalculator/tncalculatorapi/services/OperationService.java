@@ -1,7 +1,7 @@
 package com.tncalculator.tncalculatorapi.services;
 
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.model.OperationRequest;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import org.springframework.data.domain.Page;
 
