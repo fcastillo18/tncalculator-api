@@ -13,6 +13,43 @@ You must have [Docker](https://www.docker.com/products/docker-desktop/) installe
 - Create app.jar by running `./gradlew bootJar` in the console
 - After that, run the command: `docker-compose up`
 - Execute `docker ps` and wait until `tncalculator-api-server-1` &  `tncalculator-api-mysqldb-1` are up and running
-- Can send a GET request to `http://localhost:8080/api/v1/user/all` to check that is working 
+
+### Test the api
+- Call the /signup endpoint: http://localhost:8080/api/auth/signup with a body like this:
+    ```
+    {
+        "username": "admin",
+        "email": "admin@mail.com",
+        "password": "12345678",
+        "role":["admin"]
+    }
+    ```
+    You should get this response **"message": "User registered successfully!"**
+
+- Call the /sigin endpoint: http://localhost:8080/api/auth/signin with the previous info:
+    ```
+    {
+        "username": "admin",
+        "password": "12345678"
+    }
+    ```
+  You will get a response like this:
+  ```
+    {
+      "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NDk0NjU4NSwiZXhwIjoxNjg1MDMyOTg1fQ.OU-F377G7byeaeVnh03bDXhCRZVL70uqGhVJof2e7DA",
+      "type": "Bearer",
+      "id": 1,
+      "username": "admin",
+      "email": "admin@mail.com",
+      "roles": [
+        "ROLE_ADMIN"
+      ]
+    }
+  ```
+  - Can use Swagger by accessing this url: http://localhost:8080/swagger-ui/index.html#/
+  - Take the token and use it to call the endpoints. If you are using Postman see this as an example:
+   ![postman example.png](src%2Fmain%2Fresources%2Fstatic%2Fpostman%20example.png)
+
+
 
 ### Properties files
