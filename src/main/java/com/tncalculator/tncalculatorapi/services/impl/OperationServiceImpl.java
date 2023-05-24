@@ -4,9 +4,9 @@ import com.tncalculator.tncalculatorapi.aop.annotation.UpdateUserBalance;
 import com.tncalculator.tncalculatorapi.aop.annotation.ValidateUserBalance;
 import com.tncalculator.tncalculatorapi.exception.CustomException;
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.model.User;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.repository.OperationRepository;
 import com.tncalculator.tncalculatorapi.repository.RecordRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
@@ -38,7 +38,7 @@ public class OperationServiceImpl implements OperationService {
     private final OperationRepository operationRepository;
 
     @Autowired
-    public OperationServiceImpl(UserRepository userRepository, RecordRepository recordRepository, OperationRepository operationRepository) {
+    public OperationServiceImpl(UserRepository userRepository, RecordRepository recordRepository, OperationRepository operationRepository ) {
         this.userRepository = userRepository;
         this.recordRepository = recordRepository;
         this.operationRepository = operationRepository;

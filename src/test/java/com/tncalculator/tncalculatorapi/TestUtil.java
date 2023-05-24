@@ -1,12 +1,15 @@
 package com.tncalculator.tncalculatorapi;
 
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.model.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 public class TestUtil {
 
@@ -39,5 +42,21 @@ public class TestUtil {
             case SQUARE_ROOT -> operationServiceImpl.squareRoot(request);
             case RANDOM_STRING -> operationServiceImpl.randomString(request);
         };
+    }
+
+    public void mockOperationByOperationType(Operation.OperationType operationType,
+                                             OperationServiceImpl operationService, Record expectedRecord) {
+        switch (operationType) {
+
+            case ADDITION -> when(operationService.add(any(OperationRequest.class))).thenReturn(expectedRecord);
+            case SUBTRACTION -> when(operationService.subtract(any(OperationRequest.class))).thenReturn(expectedRecord);
+            case MULTIPLICATION ->
+                    when(operationService.multiply(any(OperationRequest.class))).thenReturn(expectedRecord);
+            case DIVISION -> when(operationService.divide(any(OperationRequest.class))).thenReturn(expectedRecord);
+            case SQUARE_ROOT ->
+                    when(operationService.squareRoot(any(OperationRequest.class))).thenReturn(expectedRecord);
+            case RANDOM_STRING ->
+                    when(operationService.randomString(any(OperationRequest.class))).thenReturn(expectedRecord);
+        }
     }
 }

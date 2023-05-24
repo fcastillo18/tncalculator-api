@@ -1,4 +1,4 @@
-package com.tncalculator.tncalculatorapi.payload.request.response;
+package com.tncalculator.tncalculatorapi.payload.response;
 
 import com.tncalculator.tncalculatorapi.constant.Constant;
 import lombok.*;
