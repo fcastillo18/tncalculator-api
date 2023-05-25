@@ -29,7 +29,6 @@ public class WebSecurityConfig {
   final UserDetailsServiceImpl userDetailsService;
 
   private final AuthEntryPointJwt unauthorizedHandler;
-
   @Autowired
   public WebSecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler) {
     this.userDetailsService = userDetailsService;
@@ -67,7 +66,8 @@ public class WebSecurityConfig {
         .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeHttpRequests()
-            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/").permitAll()
+            .requestMatchers("/api/test/**").permitAll()
             .requestMatchers("/api/test/**").permitAll()
             // adding Swagger API endpoints to be accessible without authentication
             .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
