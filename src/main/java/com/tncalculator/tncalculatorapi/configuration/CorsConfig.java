@@ -13,19 +13,31 @@ public class CorsConfig {
     @Value("${cors.maxAge}")
     private Long maxAge;
 
+    @Value("${cors.allow.all.origins}")
+    private boolean allowAllOrigins;
+
+    @Value("${cors.allowed.urls}")
+    private String[] allowedUrls;
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        // TODO if we need to add custom origins, we can then add it here or do a impl with properties
-//                        .allowedOrigins("http://localhost:5173")
-//                        .allowCredentials(true)
-                        .allowedOriginPatterns(CorsConfiguration.ALL) // We will allow all origins
-                        .maxAge(maxAge)
-                        .allowedMethods("*")
-                        .allowedHeaders("*");
+                if(allowAllOrigins){
+                    registry.addMapping("/**")
+                            .allowedOriginPatterns(CorsConfiguration.ALL) // We will allow all origins
+                            .maxAge(maxAge)
+                            .allowedMethods("*")
+                            .allowedHeaders("*");
+                } else {
+                    registry.addMapping("/**")
+                            .allowedOriginPatterns(allowedUrls) // We will allow just these origins
+                            .maxAge(maxAge)
+                            .allowedMethods("*")
+                            .allowedHeaders("*")
+                            .allowCredentials(true);
+                }
             }
         };
     }
