@@ -1,5 +1,6 @@
 package com.tncalculator.tncalculatorapi.payload.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.Optional;
@@ -14,6 +15,7 @@ public class OperationRequest {
     private Long userId;
     private double num1;
     private double num2;
+    @Schema(example = "string", accessMode = Schema.AccessMode.READ_ONLY) // hide the property in swagger
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     private Optional<String> randomString;
 
