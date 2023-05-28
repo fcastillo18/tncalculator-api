@@ -2,10 +2,12 @@ package com.tncalculator.tncalculatorapi.controller;
 
 import com.tncalculator.tncalculatorapi.Util.AppUtil;
 import com.tncalculator.tncalculatorapi.model.Operation;
-import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.model.Record;
+import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
 import com.tncalculator.tncalculatorapi.payload.response.OperationResponse;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/operation")
 @Validated
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+@SecurityRequirement(name = "Bearer Authentication")
 public class OperationController {
 
     private final OperationServiceImpl operationServiceImpl;
@@ -72,7 +75,11 @@ public class OperationController {
 
     @PostMapping("/randomString")
     @ResponseBody
-    public OperationResponse randomString(@RequestBody OperationRequest request) {
+    public OperationResponse randomString(@RequestParam  String userId, @RequestParam String randomString) {
+        OperationRequest request = OperationRequest.builder()
+                .userId(NumberUtils.toLong(userId))
+                .randomString(randomString.describeConstable())
+                .build();
         Record record = operationServiceImpl.randomString(request);
         return appUtil.mapRecordToResponse(record);
     }

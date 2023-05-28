@@ -67,7 +67,7 @@ public class WebSecurityConfig {
         .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
         .authorizeHttpRequests()
-            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/v1/auth/**").permitAll()
             .requestMatchers("/api/test/**").permitAll()
             // adding Swagger API endpoints to be accessible without authentication
             .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
