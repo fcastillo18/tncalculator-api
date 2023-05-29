@@ -23,6 +23,7 @@ public class RecordController{
         this.recordService = recordService;
     }
 
+    // TODO I need to return a custom response and get rid of some fields like the user pass.
     @GetMapping("/all")
     public Page<Record> getAllRecords(@RequestParam(required = false) Map<String, String> filters,
                                       @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,

@@ -2,6 +2,7 @@ package com.tncalculator.tncalculatorapi.controller;
 
 import com.tncalculator.tncalculatorapi.constant.ERole;
 import com.tncalculator.tncalculatorapi.constant.EUserStatus;
+import com.tncalculator.tncalculatorapi.exception.CustomException;
 import com.tncalculator.tncalculatorapi.model.Role;
 import com.tncalculator.tncalculatorapi.model.User;
 import com.tncalculator.tncalculatorapi.model.UserDetailsImpl;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -56,25 +58,34 @@ public class AuthController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+		try {
+			Authentication authentication = authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+			// Get the authenticated user details
+			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(GrantedAuthority::getAuthority)
-				.collect(Collectors.toList());
+			// Check if the user is active
+			if (!userRepository.findById(userDetails.getId()).orElseThrow().getStatus().equalsIgnoreCase(("active"))) {
+				throw new CustomException("User is inactive");
+			}
 
-		// TODO if user is inactive we should not allow it to sign in
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			String jwt = jwtUtils.generateJwtToken(authentication);
 
-		return ResponseEntity.ok(new JwtResponse(jwt,
-												 userDetails.getId(), 
-												 userDetails.getUsername(), 
-												 userDetails.getEmail(), 
-												 roles));
+			List<String> roles = userDetails.getAuthorities().stream()
+					.map(GrantedAuthority::getAuthority)
+					.collect(Collectors.toList());
+
+			return ResponseEntity.ok(new JwtResponse(jwt,
+					userDetails.getId(),
+					userDetails.getUsername(),
+					userDetails.getEmail(),
+					roles));
+		} catch (AuthenticationException e) {
+			// Handle incorrect username or password
+			throw new CustomException("Incorrect username or password");
+		}
 	}
 
 	@PostMapping("/signup")
