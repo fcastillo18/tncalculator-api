@@ -66,7 +66,8 @@ public class AuthController {
 			UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
 			// Check if the user is active
-			if (!userRepository.findById(userDetails.getId()).orElseThrow().getStatus().equalsIgnoreCase(("active"))) {
+			User user = userRepository.findById(userDetails.getId()).orElseThrow();
+			if (!user.getStatus().equalsIgnoreCase(("active"))) {
 				throw new CustomException("User is inactive");
 			}
 
@@ -78,9 +79,7 @@ public class AuthController {
 					.collect(Collectors.toList());
 
 			return ResponseEntity.ok(new JwtResponse(jwt,
-					userDetails.getId(),
-					userDetails.getUsername(),
-					userDetails.getEmail(),
+					user,
 					roles));
 		} catch (AuthenticationException e) {
 			// Handle incorrect username or password
@@ -107,7 +106,7 @@ public class AuthController {
 				.email(signUpRequest.getEmail())
 				.password(encoder.encode(signUpRequest.getPassword()))
 				.status(EUserStatus.ACTIVE.getStatus())
-				.balance(INITIAL_BALANCE)
+				.balance(signUpRequest.getBalance()  == null ? INITIAL_BALANCE : signUpRequest.getBalance())
 				.build();
 
 		Set<String> strRoles = signUpRequest.getRole();

@@ -4,6 +4,7 @@ import com.tncalculator.tncalculatorapi.Util.AppUtil;
 import com.tncalculator.tncalculatorapi.model.Operation;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.payload.request.OperationRequest;
+import com.tncalculator.tncalculatorapi.payload.request.RandomStringRequest;
 import com.tncalculator.tncalculatorapi.payload.response.OperationResponse;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -75,10 +76,10 @@ public class OperationController {
 
     @PostMapping("/randomString")
     @ResponseBody
-    public OperationResponse randomString(@RequestParam  String userId, @RequestParam String randomString) {
+    public OperationResponse randomString(@RequestBody RandomStringRequest randomStringRequest) {
         OperationRequest request = OperationRequest.builder()
-                .userId(NumberUtils.toLong(userId))
-                .randomString(randomString.describeConstable())
+                .userId(NumberUtils.toLong(randomStringRequest.getUserId()))
+                .randomString(randomStringRequest.getRandomString().describeConstable())
                 .build();
         Record record = operationServiceImpl.randomString(request);
         return appUtil.mapRecordToResponse(record);
