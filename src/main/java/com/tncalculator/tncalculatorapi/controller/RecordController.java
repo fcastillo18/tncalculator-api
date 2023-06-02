@@ -3,7 +3,9 @@ package com.tncalculator.tncalculatorapi.controller;
 import com.tncalculator.tncalculatorapi.model.Record;
 import com.tncalculator.tncalculatorapi.services.impl.RecordServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +16,8 @@ import java.util.Map;
 @RequestMapping("/api/v1/record")
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "3. OperationRecord", description = "The OperationRecord API. Contains all the operations that can be performed on a record.")
+@Order(3)
 public class RecordController{
 
     private final RecordServiceImpl recordService;

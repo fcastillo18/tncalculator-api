@@ -2,6 +2,13 @@
 
 You must have [Docker](https://www.docker.com/products/docker-desktop/) installed on your machine to run this project.
 
+### Live version:
+
+- You can follow this [link](http://ec2-3-89-20-5.compute-1.amazonaws.com/api/v1) to access the live version of this api.
+- Also, you can use Swagger to interact with the endpoints, here is the [swagger-ui for this API](http://ec2-3-89-20-5.compute-1.amazonaws.com/swagger-ui/index.html).
+- Also, worth to mention that this API is used/implemented within this other project: [tncalculator-frontend](https://github.com/fcastillo18/tncalculator-frontend)
+###### This live version is hosted in an AWS EC2 instance
+
 ### Local development
 - Set the variable `spring.profiles.active=dev` within the `applicacion.properties`
 - In the root project folder, do a `cd ./docker-local-db`
@@ -15,7 +22,7 @@ You must have [Docker](https://www.docker.com/products/docker-desktop/) installe
 - Execute `docker ps` and wait until `tncalculator-api-server-1` &  `tncalculator-api-mysqldb-1` are up and running
 
 ### Test the api
-- Call the /signup endpoint: http://localhost:8080/api/auth/signup with a body like this:
+- Call the /signup endpoint: http://localhost:8080/api/v1/auth/signup with a body like this:
     ```
     {
         "username": "admin",
@@ -26,7 +33,7 @@ You must have [Docker](https://www.docker.com/products/docker-desktop/) installe
     ```
     You should get this response **"message": "User registered successfully!"**
 
-- Call the /sigin endpoint: http://localhost:8080/api/auth/signin with the previous info:
+- Call the /signin endpoint: http://localhost:8080/api/v1/auth/signin with the previous info:
     ```
     {
         "username": "admin",
@@ -47,9 +54,6 @@ You must have [Docker](https://www.docker.com/products/docker-desktop/) installe
     }
   ```
   - Can use Swagger by accessing this url: http://localhost:8080/swagger-ui/index.html#/
-  - Take the token and use it to call the endpoints. If you are using Postman see this as an example:
+  - Or, can take the token and use it to call the endpoints. If you are using Postman see this as an example:
    ![postman example.png](src%2Fmain%2Fresources%2Fstatic%2Fpostman%20example.png)
-
-
-
-### Properties files
+    
