@@ -38,6 +38,13 @@ public class UserController {
         return userServiceImpl.getAllUsersWithFilterAndPagination(filters, page, size);
     }
 
+    // create a getById method here to get a user by id
+    @GetMapping("/getById")
+    @PreAuthorize("hasRole('ADMIN') || hasRole('USER')")
+    public User getById(@RequestParam(name = "id") Long id) {
+        return userServiceImpl.getUserById(id);
+    }
+
     // TODO this will now be partially covered by the AuthController. We might need to remove this controller or create future iterations
 //    @PostMapping("/create")
 //    @ResponseBody

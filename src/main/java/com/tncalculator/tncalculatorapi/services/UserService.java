@@ -11,4 +11,6 @@ public interface UserService {
     User updateUser(User user);
 
     Page<User> getAllUsersWithFilterAndPagination(Map<String, String> filters, int page, int size);
+
+    User getUserById(Long id);
 }
