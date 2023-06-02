@@ -8,8 +8,10 @@ import com.tncalculator.tncalculatorapi.payload.request.RandomStringRequest;
 import com.tncalculator.tncalculatorapi.payload.response.OperationResponse;
 import com.tncalculator.tncalculatorapi.services.impl.OperationServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +24,8 @@ import java.util.Map;
 @Validated
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @SecurityRequirement(name = "Bearer Authentication")
+@Tag(name = "2. Operations", description = "The Operations API, for performing basic operations.")
+@Order(2)
 public class OperationController {
 
     private final OperationServiceImpl operationServiceImpl;
@@ -31,12 +35,6 @@ public class OperationController {
     public OperationController(OperationServiceImpl operationServiceImpl, AppUtil appUtil) {
         this.operationServiceImpl = operationServiceImpl;
         this.appUtil = appUtil;
-    }
-
-    @GetMapping("/hello")
-    @ResponseBody
-    public String helloWorld() {
-        return "Hello World";
     }
 
     @PostMapping("/subtract")

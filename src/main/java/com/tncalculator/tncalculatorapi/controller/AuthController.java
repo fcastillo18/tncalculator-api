@@ -13,8 +13,10 @@ import com.tncalculator.tncalculatorapi.payload.response.MessageResponse;
 import com.tncalculator.tncalculatorapi.repository.RoleRepository;
 import com.tncalculator.tncalculatorapi.repository.UserRepository;
 import com.tncalculator.tncalculatorapi.security.jwt.JwtUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,6 +37,8 @@ import static com.tncalculator.tncalculatorapi.constant.Constant.INITIAL_BALANCE
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/v1/auth")
+@Tag(name = "1. Authentication", description = "The Authentication API, provides the endpoints for authentication")
+@Order(1)
 public class AuthController {
 	private final AuthenticationManager authenticationManager;
 

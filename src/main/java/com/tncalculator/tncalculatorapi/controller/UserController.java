@@ -5,6 +5,7 @@ import com.tncalculator.tncalculatorapi.services.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +21,8 @@ import java.util.Map;
 @Validated
 //@SecurityRequirement(name = "bearerAuth")
 @SecurityRequirement(name = "Bearer Authentication")
-@Tag(name = "User", description = "The User API. Contains all the operations that can be performed on a user.")
+@Tag(name = "4. User", description = "The User API. Contains all the operations that can be performed on a user.")
+@Order(4)
 public class UserController {
 
     private final UserServiceImpl userServiceImpl;
