@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 
@@ -24,14 +26,20 @@ public class JwtUtils {
 	@Value("${app.jwtExpirationMs}")
 	private int jwtExpirationMs;
 
+
 	public String generateJwtToken(Authentication authentication) {
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+		LocalDateTime currentTime = LocalDateTime.now();
+		LocalDateTime expirationTime = currentTime.plusMinutes(jwtExpirationMs); // Set the expiration time (e.g., 30 minutes from the current time)
+
+		Date expirationDate = Date.from(expirationTime.atZone(ZoneId.systemDefault()).toInstant());
+
 
 		return Jwts.builder()
 				.setSubject((userPrincipal.getUsername()))
 				.setIssuedAt(new Date())
-				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.setExpiration(expirationDate)
 				.signWith((new SecretKeySpec(Base64.getDecoder().decode(jwtSecret),
 						SignatureAlgorithm.HS256.getJcaName())))
 				.compact();
@@ -48,12 +56,15 @@ public class JwtUtils {
 
 	public boolean validateJwtToken(String authToken) {
 		try {
-			Jwts.parserBuilder()
+			Jws<Claims> claims = Jwts.parserBuilder()
 					.setSigningKey((new SecretKeySpec(Base64.getDecoder().decode(jwtSecret),
 							SignatureAlgorithm.HS256.getJcaName())))
 					.build()
 					.parseClaimsJws(authToken);
-			return true;
+
+			Date expirationDate = claims.getBody().getExpiration();
+			Date currentDate = new Date();
+			return !currentDate.after(expirationDate); // Check if the current date is before the expiration date
 		} catch (SignatureException e) {
 			logger.error("Invalid JWT signature: {}", e.getMessage());
 		} catch (MalformedJwtException e) {

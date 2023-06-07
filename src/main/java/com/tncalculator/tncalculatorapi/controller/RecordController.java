@@ -35,6 +35,14 @@ public class RecordController{
             return recordService.getAllRecordsWithFilterAndPagination(filters, page, size);
     }
 
+    @GetMapping("/all/{userId}")
+    public Page<Record> getAllOperationsByUserIdWithFilterAndPagination(@PathVariable Long userId,
+                                                                        @RequestParam(required = false) Map<String, String> filters,
+                                                                        @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                                                        @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
+        return recordService.getAllOperationsByUserIdWithFilterAndPagination(userId, filters, page, size);
+    }
+
     @PostMapping("/create")
     public Record createRecord(@RequestBody Record record) {
         return recordService.createRecord(record);

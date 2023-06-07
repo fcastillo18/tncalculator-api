@@ -164,5 +164,4 @@ public class OperationServiceImpl implements OperationService {
 
         return operationRepository.findAll(pageable);
     }
-
 }

@@ -11,6 +11,9 @@ public interface RecordService {
 
     Page<Record> getAllRecordsWithFilterAndPagination(Map<String, String> filters, int page, int size);
 
+    Page<Record> getAllOperationsByUserIdWithFilterAndPagination(Long userId, Map<String, String> filters, int page, int size);
+
     Record createRecord(Record record);
+
     void deleteRecord(Long id);
 }

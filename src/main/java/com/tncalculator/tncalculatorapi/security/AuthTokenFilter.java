@@ -19,6 +19,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -42,13 +44,22 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 						userDetails, null, userDetails.getAuthorities());
 				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
+				logger.info("Authenticated user: {}", userDetails.getUsername());
+				logger.info("User Authorities: {}", userDetails.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 		} catch (Exception e) {
 			logger.error("Cannot set user authentication: {}", e);
 		}
 
+		logger.info("Request received for endpoint: {} {}", request.getMethod(), request.getRequestURI());
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+			String parameterName = entry.getKey();
+			String[] parameterValues = entry.getValue();
+			logger.info("Request parameter: {} = {}", parameterName, Arrays.toString(parameterValues));
+		}
+		logger.info("------------------------------------------------------------");
 		filterChain.doFilter(request, response);
 	}
 

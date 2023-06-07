@@ -32,6 +32,21 @@ public class RecordServiceImpl implements RecordService {
         return recordRepository.findAll();
     }
 
+    private Specification<Record> createRecordSpecification(Map<String, String> filters) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            for (Map.Entry<String, String> entry : filters.entrySet()) {
+                String fieldName = entry.getKey();
+                String fieldValue = entry.getValue();
+                if (!StringUtils.isEmpty(fieldName) && !StringUtils.isEmpty(fieldValue)) {
+                    Path<String> path = root.get(fieldName);
+                    predicates.add(criteriaBuilder.equal(path, fieldValue));
+                }
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
     @Override
     public Page<Record> getAllRecordsWithFilterAndPagination(Map<String, String> filters, int page, int size) {
         Sort sort = Sort.by(Sort.Direction.DESC, "id"); // Sort by id in descending order
@@ -46,23 +61,44 @@ public class RecordServiceImpl implements RecordService {
 
         // If there are any filters, then create a new Specification
         if (!modifiedFilters.isEmpty()) {
-            Specification<Record> specification = (root, query, criteriaBuilder) -> {
-                List<Predicate> predicates = new ArrayList<>();
-                for (Map.Entry<String, String> entry : modifiedFilters.entrySet()) {
-                    String fieldName = entry.getKey();
-                    String fieldValue = entry.getValue();
-                    if (!StringUtils.isEmpty(fieldName) && !StringUtils.isEmpty(fieldValue)) {
-                        Path<String> path = root.get(fieldName);
-                        predicates.add(criteriaBuilder.equal(path, fieldValue));
-                    }
-                }
-                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-            };
-
+            Specification<Record> specification = createRecordSpecification(modifiedFilters);
             return recordRepository.findAll(specification, pageable);
         }
 
         return recordRepository.findAll(pageable);
+    }
+
+    public Page<Record> getAllOperationsByUserIdWithFilterAndPagination(Long userId, Map<String, String> filters, int page, int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id"); // Sort by id in descending order
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Create a new HashMap to store the modified filters
+        Map<String, String> modifiedFilters = new HashMap<>(filters);
+
+        // Remove the "page" and "size" keys from the modified filters
+        modifiedFilters.remove("page");
+        modifiedFilters.remove("size");
+
+        // If there are any filters, then create a new Specification
+        if (!modifiedFilters.isEmpty()) {
+            Specification<Record> specification = createRecordSpecification(modifiedFilters);
+
+            // Add additional predicate to filter by user id
+            specification = specification.and((root, query, criteriaBuilder) -> {
+                Path<Long> userIdPath = root.get("user").get("id");
+                return criteriaBuilder.equal(userIdPath, userId);
+            });
+
+            return recordRepository.findAll(specification, pageable);
+        }
+
+        // Add additional predicate to filter by user id
+        Specification<Record> userIdSpecification = (root, query, criteriaBuilder) -> {
+            Path<Long> userIdPath = root.get("user").get("id");
+            return criteriaBuilder.equal(userIdPath, userId);
+        };
+
+        return recordRepository.findAll(userIdSpecification, pageable);
     }
 
 
