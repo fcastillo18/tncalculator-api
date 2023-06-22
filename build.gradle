@@ -45,10 +45,10 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
 
-jar {
+bootJar {
     archiveFileName = "tncalculator-api.jar"
+    mainClassName = 'com.tncalculator.tncalculatorapi.TNCalculatorApiApplication'
 }
-
 
 tasks.named('test') {
     useJUnitPlatform()
