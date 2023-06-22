@@ -1,14 +1,12 @@
-# Use a base image with Java 17
-FROM openjdk:17-jdk
-
-# Set the working directory
+# Stage 1: Build the application
+FROM openjdk:17-jdk as builder
 WORKDIR /app
+COPY . .
+RUN microdnf install findutils
+RUN ./gradlew build -x test --no-daemon
 
-# Copy the application JAR file
-COPY build/libs/*.jar app.jar
-
-# Expose the application port
-EXPOSE 8080
-
-# Define the entry point
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Stage 2: Create the final image
+FROM openjdk:17-jdk
+WORKDIR /app
+COPY --from=builder /app/build/libs/tncalculator-api.jar app.jar
+CMD ["java", "-jar", "app.jar"]
