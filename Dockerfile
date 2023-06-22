@@ -3,6 +3,7 @@ FROM openjdk:17-jdk as builder
 WORKDIR /app
 COPY . .
 RUN microdnf install findutils
+RUN chmod +x ./gradlew
 RUN ./gradlew build -x test --no-daemon
 
 # Stage 2: Create the final image
